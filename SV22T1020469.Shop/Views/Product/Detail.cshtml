@@ -1,0 +1,234 @@
+@model SV22T1020469.Models.Catalog.Product
+@using SV22T1020469.Models.Catalog
+@{
+    ViewData["Title"] = Model.ProductName;
+    var photos = ViewBag.Photos as List<ProductPhoto> ?? new List<ProductPhoto>();
+    var attrs  = ViewBag.Attributes as List<ProductAttribute> ?? new List<ProductAttribute>();
+}
+
+<!-- BREADCRUMB -->
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index">Sản phẩm</a></li>
+        @if (!string.IsNullOrEmpty(Model.CategoryName))
+        {
+            <li class="breadcrumb-item">
+                <a asp-controller="Product" asp-action="Index"
+                   asp-route-categoryID="@Model.CategoryID">@Model.CategoryName</a>
+            </li>
+        }
+        <li class="breadcrumb-item active text-truncate" style="max-width:200px">@Model.ProductName</li>
+    </ol>
+</nav>
+
+<div class="card shop-section-card shop-product-detail mb-4">
+    <div class="row g-0">
+        <!-- ẢNH SẢN PHẨM -->
+        <div class="col-md-5 d-flex align-items-center justify-content-center p-4 rounded-start shop-product-gallery">
+            <img id="mainPhoto"
+                 src="@(string.IsNullOrEmpty(Model.Photo)
+                        ? "/images/nophoto.svg"
+                        : (Model.Photo.StartsWith("nophoto.", StringComparison.OrdinalIgnoreCase)
+                            ? $"/images/{Model.Photo}"
+                            : (Model.Photo.StartsWith("products/", StringComparison.OrdinalIgnoreCase)
+                                ? $"/images/{Model.Photo}"
+                                : $"/images/products/{Model.Photo}")))"
+                 class="img-fluid rounded shadow-sm"
+                 alt="@Model.ProductName"
+                 style="width: 100%; height: 250px; object-fit: cover;"
+                 onerror="this.onerror=null; this.src='/images/nophoto.svg';" />
+        </div>
+
+        <!-- THÔNG TIN SẢN PHẨM -->
+        <div class="col-md-7">
+            <div class="card-body p-4 p-lg-5">
+                @if (!string.IsNullOrEmpty(Model.CategoryName))
+                {
+                    <span class="badge bg-secondary mb-2">@Model.CategoryName</span>
+                }
+                <h2 class="fw-bold mb-2">@Model.ProductName</h2>
+
+                @if (!string.IsNullOrEmpty(Model.SupplierName))
+                {
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-building me-1"></i>Nhà cung cấp: @Model.SupplierName
+                    </p>
+                }
+
+                <div class="d-flex align-items-baseline gap-2 mb-4">
+                    <span class="fs-2 fw-bold price-tag">@Model.Price.ToString("N0") đ</span>
+                    @if (!string.IsNullOrEmpty(Model.Unit))
+                    {
+                        <span class="text-muted">/ @Model.Unit</span>
+                    }
+                </div>
+
+                <!-- THUỘC TÍNH -->
+                @if (attrs.Any())
+                {
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-2 border-bottom pb-1">Thông số kỹ thuật</h6>
+                        <table class="table table-sm table-borderless mb-0">
+                            @foreach (var a in attrs)
+                            {
+                                <tr>
+                                    <td class="text-muted" style="width:40%">@a.AttributeName</td>
+                                    <td class="fw-semibold">@a.AttributeValue</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                }
+
+                <div id="stockMessage" class="fw-semibold mb-2"></div>
+
+                <!-- THÊM VÀO GIỎ -->
+                <div class="d-flex gap-3 align-items-center mb-3">
+                    <div class="input-group" style="width:140px">
+                        <button class="btn btn-outline-secondary" type="button" onclick="changeQty(-1)">−</button>
+                        <input type="number" id="qtyInput" value="1" min="1" max="999"
+                               class="form-control text-center" />
+                        <button class="btn btn-outline-secondary" type="button" onclick="changeQty(1)">+</button>
+                    </div>
+                    <button id="btnAddCart" onclick="addToCartDetail(@Model.ProductID)"
+                            class="btn btn-success btn-lg fw-bold flex-grow-1">
+                        <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ hàng
+                    </button>
+                </div>
+
+                <a asp-controller="Product" asp-action="Index" class="btn btn-link text-muted p-0">
+                    <i class="bi bi-arrow-left me-1"></i>Quay lại danh sách
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MÔ TẢ SẢN PHẨM -->
+@if (!string.IsNullOrWhiteSpace(Model.ProductDescription))
+{
+    <div class="card shop-section-card mb-4">
+        <div class="card-header bg-white fw-bold">
+            <i class="bi bi-file-text me-1 text-primary"></i>Mô tả sản phẩm
+        </div>
+        <div class="card-body" style="white-space: pre-line; line-height: 1.8;">
+            @Model.ProductDescription
+        </div>
+    </div>
+}
+
+<!-- ẢNH BỔ SUNG -->
+@if (photos.Any())
+{
+    <div class="card shop-section-card">
+        <div class="card-header bg-white fw-bold">
+            <i class="bi bi-images me-1 text-primary"></i>Hình ảnh sản phẩm
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var ph in photos)
+                {
+                    <img src="@(string.IsNullOrEmpty(ph.Photo)
+                                ? "/images/nophoto.svg"
+                                : (ph.Photo.StartsWith("nophoto.", StringComparison.OrdinalIgnoreCase)
+                                    ? $"/images/{ph.Photo}"
+                                    : (ph.Photo.StartsWith("products/", StringComparison.OrdinalIgnoreCase)
+                                        ? $"/images/{ph.Photo}"
+                                        : $"/images/products/{ph.Photo}")))"
+                         class="img-thumbnail gallery-thumb"
+                         style="width: 100%; height: 250px; object-fit: cover; cursor:pointer;"
+                         onclick="document.getElementById('mainPhoto').src=this.src"
+                         onerror="this.onerror=null; this.src='/images/nophoto.svg';"
+                         alt="@ph.Description" />
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+<script>
+const productId = @Model.ProductID;
+let currentStock = @Model.Quantity;
+
+function changeQty(delta) {
+    const inp = document.getElementById('qtyInput');
+    let val = parseInt(inp.value) + delta;
+    if (val < 1) val = 1;
+    if (val > 999) val = 999;
+    inp.value = val;
+}
+
+function addToCartDetail(productID) {
+    const qty = parseInt(document.getElementById('qtyInput').value) || 1;
+    const btn = document.getElementById('btnAddCart');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Đang thêm...';
+
+    fetch('/Cart/Add?id=' + productID + '&qty=' + qty)
+        .then(r => r.json())
+        .then(data => {
+            if (data.requireLogin && data.redirectUrl) {
+                window.location.href = data.redirectUrl;
+                return;
+            }
+            if (data.success) {
+                // Cập nhật badge navbar
+                document.querySelectorAll('.cart-badge').forEach(b => {
+                    b.textContent = data.count > 99 ? '99+' : data.count;
+                });
+                btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Đã thêm vào giỏ!';
+                btn.className = btn.className.replace('btn-success', 'btn-secondary');
+                setTimeout(() => {
+                    btn.innerHTML = orig;
+                    btn.className = btn.className.replace('btn-secondary', 'btn-success');
+                    btn.disabled = false;
+                }, 2000);
+                // Không dùng cache cũ: luôn refresh tồn kho mới nhất từ API
+                refreshStockFromServer();
+            } else {
+                const stockMessage = document.getElementById('stockMessage');
+                if (stockMessage) {
+                    stockMessage.className = 'text-danger fw-semibold mb-2';
+                    stockMessage.textContent = data.message || 'Không thể thêm vào giỏ hàng.';
+                }
+                btn.innerHTML = orig;
+                btn.disabled = false;
+            }
+        });
+}
+
+async function refreshStockFromServer() {
+    const response = await fetch('/Product/Stock?productId=' + productId + '&t=' + Date.now(), { cache: 'no-store' });
+    const payload = await response.json();
+    if (!payload.success) return;
+    currentStock = payload.quantity || 0;
+    onStockChange();
+}
+
+function onStockChange() {
+    const stockMessage = document.getElementById('stockMessage');
+    const btn = document.getElementById('btnAddCart');
+    const qtyInput = document.getElementById('qtyInput');
+    if (!stockMessage || !btn || !qtyInput) return;
+
+    if (currentStock <= 0) {
+        stockMessage.className = 'text-danger fw-semibold mb-2';
+        stockMessage.textContent = 'Hết hàng';
+        btn.disabled = true;
+        qtyInput.disabled = true;
+    } else {
+        stockMessage.className = 'text-success fw-semibold mb-2';
+        stockMessage.textContent = 'Còn hàng: ' + currentStock;
+        btn.disabled = false;
+        qtyInput.disabled = false;
+        if (parseInt(qtyInput.value || '1') > currentStock) qtyInput.value = currentStock;
+    }
+}
+
+onStockChange();
+refreshStockFromServer();
+</script>
+}

@@ -1,0 +1,183 @@
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<!-- Banner carousel (kiểu Shopee/Lazada) -->
+<div id="homeMarketCarousel" class="carousel slide home-mp-carousel mb-4" data-bs-ride="carousel" data-bs-interval="5000" aria-label="Ưu đãi nổi bật">
+    <div class="carousel-indicators home-mp-indicators">
+        <button type="button" data-bs-target="#homeMarketCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#homeMarketCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#homeMarketCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner rounded-4 overflow-hidden shadow-sm">
+        <div class="carousel-item active">
+            <div class="home-mp-slide home-mp-slide--a">
+                <div class="home-mp-slide-inner">
+                    <span class="home-mp-badge">Mega Sale 4.4</span>
+                    <h1 class="home-mp-slide-title">Giảm đến 55% điện tử &amp; gia dụng</h1>
+                    <p class="home-mp-slide-text">Voucher đến 500k cho đơn đầu tiên</p>
+                    <a asp-controller="Product" asp-action="Index" class="btn home-mp-btn-primary">Mua ngay</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="home-mp-slide home-mp-slide--b">
+                <div class="home-mp-slide-inner">
+                    <span class="home-mp-badge home-mp-badge--light">Freeship</span>
+                    <h1 class="home-mp-slide-title">0đ vận chuyển toàn quốc</h1>
+                    <p class="home-mp-slide-text">Áp dụng đơn từ 399.000đ</p>
+                    <a asp-controller="Product" asp-action="Index" class="btn home-mp-btn-primary">Xem sản phẩm</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="home-mp-slide home-mp-slide--c">
+                <div class="home-mp-slide-inner">
+                    <span class="home-mp-badge">Uy tín</span>
+                    <h1 class="home-mp-slide-title">Hàng chính hãng, đổi trả 7 ngày</h1>
+                    <p class="home-mp-slide-text">Thanh toán COD hoặc chuyển khoản</p>
+                    <a asp-controller="Order" asp-action="History" class="btn home-mp-btn-primary">Theo dõi đơn</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev home-mp-control" type="button" data-bs-target="#homeMarketCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Trước</span>
+    </button>
+    <button class="carousel-control-next home-mp-control" type="button" data-bs-target="#homeMarketCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Sau</span>
+    </button>
+</div>
+
+<!-- Danh mục icon tròn -->
+<section class="home-mp-section mb-4" aria-labelledby="mp-cat-title">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 id="mp-cat-title" class="home-mp-heading mb-0">Danh mục</h2>
+        <a asp-controller="Product" asp-action="Index" class="home-mp-link-all">Tất cả <i class="bi bi-chevron-right small"></i></a>
+    </div>
+    <div class="home-mp-cat-row">
+        <a asp-controller="Product" asp-action="Index" class="home-mp-cat-item">
+            <span class="home-mp-cat-icon"><i class="bi bi-phone"></i></span>
+            <span class="home-mp-cat-text">Điện tử</span>
+        </a>
+        <a asp-controller="Product" asp-action="Index" class="home-mp-cat-item">
+            <span class="home-mp-cat-icon"><i class="bi bi-watch"></i></span>
+            <span class="home-mp-cat-text">Phụ kiện</span>
+        </a>
+        <a asp-controller="Product" asp-action="Index" class="home-mp-cat-item">
+            <span class="home-mp-cat-icon"><i class="bi bi-cup-hot"></i></span>
+            <span class="home-mp-cat-text">Gia dụng</span>
+        </a>
+        <a asp-controller="Product" asp-action="Index" class="home-mp-cat-item">
+            <span class="home-mp-cat-icon"><i class="bi bi-bag"></i></span>
+            <span class="home-mp-cat-text">Thời trang</span>
+        </a>
+        <a asp-controller="Product" asp-action="Index" class="home-mp-cat-item">
+            <span class="home-mp-cat-icon"><i class="bi bi-controller"></i></span>
+            <span class="home-mp-cat-text">Giải trí</span>
+        </a>
+        <a asp-controller="Product" asp-action="Index" class="home-mp-cat-item">
+            <span class="home-mp-cat-icon"><i class="bi bi-gift"></i></span>
+            <span class="home-mp-cat-text">Quà tặng</span>
+        </a>
+    </div>
+</section>
+
+<!-- Hàng gợi ý / kênh nhanh -->
+<section class="home-mp-quick card border-0 shadow-sm mb-4" aria-label="Kênh mua sắm">
+    <div class="card-body py-3">
+        <div class="row g-2 g-md-3 align-items-center">
+            <div class="col-12 col-md-auto">
+                <span class="home-mp-flash-label"><i class="bi bi-lightning-charge-fill me-1"></i>Gợi ý cho bạn</span>
+            </div>
+            <div class="col">
+                <div class="home-mp-quick-scroll">
+                    <a asp-controller="Product" asp-action="Index" class="home-mp-quick-chip">Deal hot</a>
+                    <a asp-controller="Product" asp-action="Index" class="home-mp-quick-chip">Mới về</a>
+                    <a asp-controller="Product" asp-action="Index" class="home-mp-quick-chip">Bán chạy</a>
+                    <a asp-controller="Cart" asp-action="Index" class="home-mp-quick-chip">Giỏ hàng</a>
+                    <a asp-controller="Order" asp-action="History" class="home-mp-quick-chip">Đơn mua</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Cam kết: một hàng mảnh, nền trắng -->
+<section class="home-mp-trust card border-0 shadow-sm mb-4" aria-label="Cam kết">
+    <div class="card-body py-3">
+        <div class="row row-cols-2 row-cols-md-4 g-3 text-center small">
+            <div class="col">
+                <div class="home-mp-trust-item">
+                    <i class="bi bi-truck home-mp-trust-ico"></i>
+                    <div class="fw-semibold">Giao đúng hẹn</div>
+                    <div class="text-muted">99.5%</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="home-mp-trust-item">
+                    <i class="bi bi-people home-mp-trust-ico"></i>
+                    <div class="fw-semibold">Khách hàng</div>
+                    <div class="text-muted">50K+</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="home-mp-trust-item">
+                    <i class="bi bi-headset home-mp-trust-ico"></i>
+                    <div class="fw-semibold">Hỗ trợ</div>
+                    <div class="text-muted">24/7</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="home-mp-trust-item">
+                    <i class="bi bi-arrow-return-left home-mp-trust-ico"></i>
+                    <div class="fw-semibold">Đổi trả</div>
+                    <div class="text-muted">7 ngày</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dịch vụ: 3 thẻ trắng -->
+<section class="row g-3 mb-4" aria-label="Dịch vụ">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 home-mp-feature">
+            <div class="card-body">
+                <div class="home-mp-feature-icon text-primary"><i class="bi bi-truck"></i></div>
+                <h3 class="h6 fw-bold mt-2">Giao nhanh trong ngày</h3>
+                <p class="text-muted small mb-0">Tối ưu tuyến giao vận, cập nhật trạng thái theo thời gian thực.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 home-mp-feature">
+            <div class="card-body">
+                <div class="home-mp-feature-icon text-success"><i class="bi bi-patch-check"></i></div>
+                <h3 class="h6 fw-bold mt-2">Chính hãng 100%</h3>
+                <p class="text-muted small mb-0">Kiểm duyệt nguồn gốc, hoàn tiền nếu không đúng mô tả.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 home-mp-feature">
+            <div class="card-body">
+                <div class="home-mp-feature-icon text-warning"><i class="bi bi-credit-card-2-front"></i></div>
+                <h3 class="h6 fw-bold mt-2">Thanh toán linh hoạt</h3>
+                <p class="text-muted small mb-0">COD, chuyển khoản và ưu đãi khi thanh toán online.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="home-mp-cta rounded-4 p-4 p-md-5 text-center mb-2">
+    <h2 class="h4 fw-bold mb-2">Sẵn sàng săn sale hôm nay?</h2>
+    <p class="text-white text-opacity-90 small mb-3 mx-auto" style="max-width: 26rem">Đăng ký để nhận voucher người mới và theo dõi đơn hàng dễ dàng.</p>
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+        <a asp-controller="Account" asp-action="Register" class="btn btn-light fw-semibold px-4 rounded-pill">Tạo tài khoản</a>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-outline-light fw-semibold px-4 rounded-pill">Xem danh mục</a>
+    </div>
+</section>

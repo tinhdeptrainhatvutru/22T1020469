@@ -1,0 +1,44 @@
+$ErrorActionPreference = "Stop"
+
+function Ensure-Dir([string]$Path) {
+  if (-not (Test-Path -LiteralPath $Path)) {
+    New-Item -ItemType Directory -Path $Path | Out-Null
+  }
+}
+
+$svg = @"
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f1f3f5"/>
+      <stop offset="1" stop-color="#dee2e6"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="480" fill="url(#bg)"/>
+  <rect x="40" y="40" width="560" height="400" rx="18" fill="#ffffff" opacity="0.85"/>
+  <g fill="none" stroke="#adb5bd" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M180 310l70-90 70 80 60-70 80 100"/>
+    <rect x="170" y="160" width="300" height="200" rx="16"/>
+    <circle cx="250" cy="220" r="22"/>
+  </g>
+  <text x="320" y="410" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#6c757d">
+    No photo
+  </text>
+</svg>
+"@
+
+$targets = @(
+  "SV22T1020605.Admin/wwwroot/images/nophoto.svg",
+  "SV22T1020469.Shop/wwwroot/images/nophoto.svg"
+)
+
+foreach ($t in $targets) {
+  $full = Join-Path $PSScriptRoot "..\$t"
+  $dir = Split-Path -Parent $full
+  Ensure-Dir $dir
+  Set-Content -LiteralPath $full -Value $svg -Encoding UTF8
+  Write-Host "Wrote $full"
+}
+
+Write-Host "Done."
+

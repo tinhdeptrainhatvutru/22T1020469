@@ -1,0 +1,157 @@
+@model SV22T1020469.Models.Catalog.Product
+
+@section PageToolBar {
+    <button type="submit" form="formEdit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Lưu dữ liệu</button>
+    <a href="~/Product" class="btn btn-secondary ms-1"><i class="bi bi-arrow-left"></i> Quay lại</a>
+}
+
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header"><h5 class="card-title mb-0"><i class="bi bi-box-seam me-2"></i> Thông tin mặt hàng</h5></div>
+            <div class="card-body">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show mb-3">
+                        <i class="bi bi-check-circle me-1"></i> @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mb-3">
+                        <i class="bi bi-exclamation-triangle me-1"></i> @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                <form id="formEdit" action="~/Product/Save" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="ProductID" value="@Model.ProductID" />
+
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger mb-3" })
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Tên mặt hàng <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="ProductName" value="@Model.ProductName" autofocus />
+                            @Html.ValidationMessage("ProductName", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Loại hàng <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-select" name="CategoryID">
+                                <option value="0">-- Chọn loại hàng --</option>
+                                @foreach (var item in ViewBag.Categories)
+                                {
+                                    if (item.Value == Model.CategoryID?.ToString())
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            @Html.ValidationMessage("CategoryID", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Nhà cung cấp <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-select" name="SupplierID">
+                                <option value="0">-- Chọn nhà cung cấp --</option>
+                                @foreach (var item in ViewBag.Suppliers)
+                                {
+                                    if (item.Value == Model.SupplierID?.ToString())
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            @Html.ValidationMessage("SupplierID", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Đơn vị tính <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="Unit" value="@Model.Unit" />
+                            @Html.ValidationMessage("Unit", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Giá <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" name="Price" value="@Model.Price.ToString("0.##")" />
+                            @Html.ValidationMessage("Price", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Tồn kho <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" name="Quantity" value="@Model.Quantity" min="0" />
+                            @Html.ValidationMessage("Quantity", new { @class = "text-danger" })
+                            <div class="form-text">
+                                Nếu bạn đang quản lý tồn kho theo phân loại (màu/kích cỡ), vui lòng cập nhật ở bảng <b>Thuộc tính mặt hàng</b> phía dưới.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Ảnh đại diện</label>
+                        <div class="col-sm-9">
+                            <input type="file" class="form-control" name="uploadPhoto" accept="image/*" />
+                            @Html.ValidationMessage("Photo", new { @class = "text-danger" })
+                            <input type="hidden" name="Photo" value="@Model.Photo" />
+                            <div class="mt-2">
+                                <img src="@((string.IsNullOrEmpty(Model.Photo))
+                                                ? "/images/nophoto.svg"
+                                                : (Model.Photo.StartsWith("nophoto.", StringComparison.OrdinalIgnoreCase)
+                                                    ? $"/images/{Model.Photo}"
+                                                    : (Model.Photo.StartsWith("products/", StringComparison.OrdinalIgnoreCase)
+                                                        ? $"/images/{Model.Photo}"
+                                                        : $"/images/products/{Model.Photo}")))"
+                                     onerror="this.src='/images/nophoto.svg'"
+                                     class="img-thumbnail" style="max-height: 160px; object-fit:cover;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Mô tả</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" rows="3" name="ProductDescription">@Model.ProductDescription</textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-9 offset-sm-3">
+                            <div class="form-check form-switch mt-3">
+                                <input class="form-check-input" type="checkbox" role="switch" name="IsSelling" value="true" id="IsSelling" @(Model.IsSelling == true ? "checked" : "") style="cursor: pointer;">
+                                <input type="hidden" name="IsSelling" value="false" />
+                                <label class="form-check-label text-success fw-bold" for="IsSelling" style="cursor: pointer;">
+                                    Đang được bán (Hiển thị lên Web)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.ProductID > 0)
+{
+    await Html.RenderPartialAsync("ListPhotos");
+    await Html.RenderPartialAsync("ListAttributes");
+}

@@ -1,0 +1,180 @@
+@model List<SV22T1020469.Models.Sales.OrderViewInfo>
+@using SV22T1020469.Models.Sales
+@{
+    ViewData["Title"] = "Lịch sử mua hàng";
+    Layout = "_Layout";
+
+    // ĐỔI TÊN BIẾN 'page' THÀNH 'currentPage' ĐỂ KHÔNG BỊ XUNG ĐỘT TỪ KHÓA @page CỦA RAZOR
+    int currentPage = ViewBag.Page ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalCount = ViewBag.TotalCount ?? 0;
+    int status = ViewBag.Status ?? 0;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">
+        <i class="bi bi-clock-history me-2 text-primary"></i>Lịch sử mua hàng
+    </h4>
+    <a asp-controller="Product" asp-action="Index" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-shop me-1"></i>Tiếp tục mua sắm
+    </a>
+</div>
+
+<div class="mb-3 d-flex flex-wrap gap-2">
+    @{
+        var statusFilters = new (int Val, string Label, string Color)[]
+        {
+        (0,  "Tất cả",      "secondary"),
+        (1,  "Chờ duyệt",   "warning"),
+        (2,  "Đã duyệt",    "primary"),
+        (3,  "Đang giao",   "info"),
+        (4,  "Hoàn tất",    "success"),
+        (-1, "Đã hủy",      "danger"),
+        (-2, "Từ chối",     "dark"),
+        };
+    }
+    @foreach (var f in statusFilters)
+    {
+        <a asp-controller="Order" asp-action="History"
+           asp-route-status="@f.Val" asp-route-page="1"
+           class="btn btn-sm btn-@(status == f.Val ? f.Color : "outline-" + f.Color)">
+            @f.Label
+        </a>
+    }
+</div>
+
+<p class="text-muted small mb-3">
+    Tổng cộng <strong>@totalCount</strong> đơn hàng
+    @if (status != 0)
+    {
+        <span> – đang lọc theo trạng thái</span>
+    }
+</p>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <i class="bi bi-bag-x text-muted" style="font-size:3.5rem"></i>
+        <h5 class="mt-3 text-muted">Không có đơn hàng nào</h5>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-primary mt-2">
+            Mua sắm ngay
+        </a>
+    </div>
+}
+else
+{
+    <div class="card shop-section-card d-none d-md-block">
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width:90px">Mã đơn</th>
+                        <th style="width:160px">Thời gian đặt</th>
+                        <th>Địa chỉ giao hàng</th>
+                        <th style="width:150px" class="text-end">Tổng tiền</th>
+                        <th style="width:130px" class="text-center">Trạng thái</th>
+                        <th style="width:70px" class="text-center">Chi tiết</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold text-primary">#@o.OrderID</td>
+                            <td class="text-muted small">@o.OrderTime.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <div class="text-truncate" style="max-width:250px" title="@o.DeliveryAddress">
+                                    @o.DeliveryAddress
+                                </div>
+                                @if (!string.IsNullOrEmpty(o.DeliveryProvince))
+                                {
+                                    <small class="text-muted">@o.DeliveryProvince</small>
+                                }
+                            </td>
+                            <td class="text-end fw-bold price-tag">@o.TotalAmount.ToString("N0") đ</td>
+                            <td class="text-center">
+                                @Html.Raw(GetStatusBadge(o.Status))
+                            </td>
+                            <td class="text-center">
+                                <a asp-controller="Order" asp-action="Detail"
+                                   asp-route-id="@o.OrderID"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-md-none">
+        @foreach (var o in Model)
+        {
+            <div class="card shop-section-card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="fw-bold text-primary">#@o.OrderID</span>
+                        @Html.Raw(GetStatusBadge(o.Status))
+                    </div>
+                    <div class="small text-muted mb-1">
+                        <i class="bi bi-calendar me-1"></i>@o.OrderTime.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+                    <div class="small mb-2">
+                        <i class="bi bi-geo-alt me-1 text-muted"></i>@o.DeliveryAddress
+                        @if (!string.IsNullOrEmpty(o.DeliveryProvince))
+                        {
+                            <span class="text-muted">, @o.DeliveryProvince</span>
+                        }
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="fw-bold price-tag">@o.TotalAmount.ToString("N0") đ</span>
+                        <a asp-controller="Order" asp-action="Detail"
+                           asp-route-id="@o.OrderID"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye me-1"></i>Xem chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (totalPages > 1)
+    {
+        <nav class="mt-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span class="text-muted small">Trang @currentPage / @totalPages</span>
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-controller="Order" asp-action="History"
+                       asp-route-page="@(currentPage - 1)" asp-route-status="@status">«</a>
+                </li>
+                @for (int p = Math.Max(1, currentPage - 2); p <= Math.Min(totalPages, currentPage + 2); p++)
+                {
+                    <li class="page-item @(p == currentPage ? "active" : "")">
+                        <a class="page-link" asp-controller="Order" asp-action="History"
+                           asp-route-page="@p" asp-route-status="@status">@p</a>
+                    </li>
+                }
+                <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-controller="Order" asp-action="History"
+                       asp-route-page="@(currentPage + 1)" asp-route-status="@status">»</a>
+                </li>
+            </ul>
+        </nav>
+    }
+}
+
+@functions {
+    string GetStatusBadge(OrderStatusEnum s) => s switch
+    {
+        OrderStatusEnum.New => "<span class='badge bg-warning text-dark order-status-badge'>Chờ duyệt</span>",
+        OrderStatusEnum.Accepted => "<span class='badge bg-primary order-status-badge'>Đã xác nhận</span>",
+        OrderStatusEnum.Shipping => "<span class='badge bg-info text-dark order-status-badge'>Đang giao hàng</span>",
+        OrderStatusEnum.Completed => "<span class='badge bg-success order-status-badge'>Hoàn tất</span>",
+        OrderStatusEnum.Cancelled => "<span class='badge bg-secondary order-status-badge'>Đã hủy</span>",
+        OrderStatusEnum.Rejected => "<span class='badge bg-danger order-status-badge'>Bị từ chối</span>",
+        _ => "<span class='badge bg-light text-dark order-status-badge'>Không rõ</span>"
+    };
+}

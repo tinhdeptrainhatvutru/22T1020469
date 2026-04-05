@@ -1,0 +1,97 @@
+@model SV22T1020469.Models.Sales.OrderSearchInput
+@using SV22T1020469.Models.Sales
+
+@{
+    ViewBag.Title = "Quản lý Đơn hàng";
+}
+
+@section PageToolBar {
+    <a href="~/Order/Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>Lập đơn hàng mới
+    </a>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-circle me-1"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle me-1"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form id="formSearch"
+              method="get"
+              action="~/Order/Search"
+              data-target="searchResult"
+              onsubmit="paginationSearch(event,this,1)">
+
+            <input type="hidden" asp-for="PageSize" />
+
+            <div class="row g-2 align-items-end">
+
+                <div class="col-md-3">
+                    <label class="form-label">Trạng thái</label>
+                    <select class="form-select" name="Status">
+                        <option value="">-- Tất cả --</option>
+                        <option value="1"  selected="@(Model.Status != null && (int)Model.Status == 1)">Chờ duyệt</option>
+                        <option value="2"  selected="@(Model.Status != null && (int)Model.Status == 2)">Đã duyệt</option>
+                        <option value="3"  selected="@(Model.Status != null && (int)Model.Status == 3)">Đang giao</option>
+                        <option value="4"  selected="@(Model.Status != null && (int)Model.Status == 4)">Hoàn tất</option>
+                        <option value="-1" selected="@(Model.Status != null && (int)Model.Status == -1)">Đã hủy</option>
+                        <option value="-2" selected="@(Model.Status != null && (int)Model.Status == -2)">Từ chối</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Ngày lập</label>
+                    <div class="input-group">
+                        <input type="text" asp-for="DateFrom"
+                               class="form-control date-picker"
+                               placeholder="Từ ngày" />
+                        <span class="input-group-text">→</span>
+                        <input type="text" asp-for="DateTo"
+                               class="form-control date-picker"
+                               placeholder="Đến ngày" />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Khách hàng / Nhân viên</label>
+                    <input type="text"
+                           asp-for="SearchValue"
+                           class="form-control"
+                           placeholder="Tìm theo tên khách hàng, nhân viên..." />
+                </div>
+
+                <div class="col-md-1 d-grid">
+                    <button class="btn btn-info">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="searchResult"></div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            paginationSearch(null,
+                document.getElementById("formSearch"),
+                @Model.Page);
+        });
+    </script>
+}

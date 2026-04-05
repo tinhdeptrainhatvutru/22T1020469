@@ -1,0 +1,174 @@
+@model List<SV22T1020469.Shop.Models.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    Layout = "_Layout";
+}
+
+<h4 class="fw-bold mb-4">
+    <i class="bi bi-cart3 me-2 text-success"></i>Giỏ hàng của bạn
+</h4>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="empty-cart card border-0 shadow-sm py-5 px-4 text-center">
+        <div class="card-body py-5">
+            <i class="bi bi-cart3 text-muted display-1 d-block mb-3 opacity-50"></i>
+            <h5 class="fw-semibold text-secondary mb-2">Giỏ hàng của bạn đang trống</h5>
+            <p class="text-muted mb-4 small">Khám phá sản phẩm và thêm vào giỏ để đặt hàng nhé.</p>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-primary btn-lg px-4 rounded-pill">
+                <i class="bi bi-arrow-left-circle me-2"></i>Quay lại mua sắm
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <!-- DANH SÁCH GIỎ HÀNG -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 shop-section-card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width:50px"></th>
+                                    <th>Sản phẩm</th>
+                                    <th style="width:130px" class="text-center">Số lượng</th>
+                                    <th style="width:130px" class="text-end">Đơn giá</th>
+                                    <th style="width:140px" class="text-end">Thành tiền</th>
+                                    <th style="width:50px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="ps-3">
+                                            <img src="@(string.IsNullOrEmpty(item.Photo)
+                                                    ? "/images/nophoto.svg"
+                                                    : (item.Photo.StartsWith("nophoto.", StringComparison.OrdinalIgnoreCase)
+                                                        ? $"/images/{item.Photo}"
+                                                        : (item.Photo.StartsWith("products/", StringComparison.OrdinalIgnoreCase)
+                                                            ? $"/images/{item.Photo}"
+                                                            : $"/images/products/{item.Photo}")))"
+                                                 style="width: 64px; height: 64px; object-fit: cover; border-radius:8px"
+                                                 onerror="this.onerror=null; this.src='/images/nophoto.svg';" />
+                                        </td>
+                                        <td>
+                                            <span class="fw-semibold">@item.ProductName</span>
+                                        </td>
+                                        <td>
+                                            <form asp-controller="Cart" asp-action="Update"
+                                                  method="post" class="d-flex align-items-center justify-content-center gap-1"
+                                                  id="cart-form-@item.ProductID">
+                                                <input type="hidden" name="id" value="@item.ProductID" />
+                                                <button type="button"
+                                                        class="btn btn-outline-secondary btn-sm px-2"
+                                                        onclick="adjustCartQty(@item.ProductID, -1)">−</button>
+                                                <input id="cart-qty-@item.ProductID" name="qty" type="number"
+                                                       value="@item.Quantity"
+                                                       min="1" max="999"
+                                                       class="form-control form-control-sm text-center"
+                                                       style="width:55px"
+                                                       onchange="this.form.submit()" />
+                                                <button type="button"
+                                                        class="btn btn-outline-secondary btn-sm px-2"
+                                                        onclick="adjustCartQty(@item.ProductID, 1)">+</button>
+                                            </form>
+                                        </td>
+                                        <td class="text-end text-muted">@item.SalePrice.ToString("N0") đ</td>
+                                        <td class="text-end fw-bold price-tag">@item.Total.ToString("N0") đ</td>
+                                        <td class="text-center">
+                                            <a asp-controller="Cart" asp-action="Remove"
+                                               asp-route-id="@item.ProductID"
+                                               class="btn btn-sm btn-outline-danger"
+                                               onclick="return confirm('Xóa sản phẩm này khỏi giỏ hàng?')">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+                    <a asp-controller="Product" asp-action="Index"
+                       class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Tiếp tục mua sắm
+                    </a>
+                    <a asp-controller="Cart" asp-action="Clear"
+                       class="btn btn-outline-danger btn-sm"
+                       onclick="return confirm('Xóa toàn bộ giỏ hàng?')">
+                        <i class="bi bi-trash me-1"></i>Xóa giỏ hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- TÓM TẮT & THANH TOÁN -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 shop-section-card">
+                <div class="card-header bg-white fw-bold">
+                    <i class="bi bi-receipt me-1 text-primary"></i>Tóm tắt đơn hàng
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Số lượng sản phẩm</span>
+                        <span>@Model.Sum(x => x.Quantity) món</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Phí vận chuyển</span>
+                        <span class="text-success">Miễn phí</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-bold fs-6">Tổng cộng</span>
+                        <span class="fw-bold fs-5 price-tag">
+                            @Model.Sum(x => x.Total).ToString("N0") đ
+                        </span>
+                    </div>
+
+                    @{
+                        var user = Context.Session.GetObject<WebUserData>("user");
+                    }
+                    @if (user != null)
+                    {
+                        <a asp-controller="Order" asp-action="Checkout"
+                           class="btn btn-success btn-lg w-100 fw-bold">
+                            <i class="bi bi-bag-check me-1"></i>Đặt hàng ngay
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login"
+                           asp-route-returnUrl="/Order/Checkout"
+                           class="btn btn-warning btn-lg w-100 fw-bold">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập để đặt hàng
+                        </a>
+                        <p class="text-muted small text-center mt-2 mb-0">
+                            Bạn cần đăng nhập để tiến hành đặt hàng
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+<script>
+    function adjustCartQty(productId, delta) {
+        const inp = document.getElementById('cart-qty-' + productId);
+        if (!inp) return;
+        let v = parseInt(inp.value, 10);
+        if (isNaN(v)) v = 1;
+        v += delta;
+        if (v < 1) v = 1;
+        if (v > 999) v = 999;
+        inp.value = v;
+        inp.closest('form').submit();
+    }
+</script>
+}

@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "Danh sách thuộc tính sản phẩm";
+}
+
+<!-- ===== Product Info (optional) ===== -->
+<div class="card mb-3">
+    <div class="card-body">
+        <strong>Sản phẩm:</strong> Áo thun nam cao cấp
+    </div>
+</div>
+
+<!-- ===== Attribute List ===== -->
+<div class="card">
+    <div class="card-header d-flex align-items-center">
+        <h5 class="mb-0">Thuộc tính</h5>
+        <a href="~/Product/CreateAttribute/1"
+           class="btn btn-sm btn-success ms-auto">
+            <i class="bi bi-plus-circle"></i> Thêm thuộc tính
+        </a>
+    </div>
+
+    <div class="card-body table-responsive p-0">
+        <table class="table table-bordered table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Tên thuộc tính</th>
+                    <th>Giá trị</th>
+                    <th style="width:120px" class="text-center">Chức năng</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Màu sắc</td>
+                    <td>Đen</td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            <a href="~/Product/EditAttribute/1?attributeId=1"
+                               class="btn btn-sm btn-outline-warning"
+                               title="Sửa">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="~/Product/DeleteAttribute/1?attributeId=1"
+                               class="btn btn-sm btn-outline-danger"
+                               title="Xóa">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Kích thước</td>
+                    <td>L</td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            <a href="~/Product/EditAttribute/1?attributeId=2"
+                               class="btn btn-sm btn-outline-warning">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="~/Product/DeleteAttribute/1?attributeId=2"
+                               class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ===== Actions ===== -->
+<div class="mt-4 text-end">
+    <a href="~/Product/Index" class="btn btn-secondary">
+        Quay lại
+    </a>
+</div>

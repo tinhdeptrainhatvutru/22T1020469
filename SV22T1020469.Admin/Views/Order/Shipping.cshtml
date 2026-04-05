@@ -1,0 +1,30 @@
+@model int
+@{
+    Layout = null;
+    var shippers = ViewBag.Shippers as List<SV22T1020469.Models.Partner.Shipper>
+                   ?? new List<SV22T1020469.Models.Partner.Shipper>();
+}
+<div class="modal-header text-bg-info">
+    <strong class="modal-title"><i class="bi bi-truck me-1"></i>Chọn người giao hàng</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<form method="post" action="/Order/Shipping/@Model">
+    <div class="modal-body">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Người giao hàng <span class="text-danger">*</span></label>
+            <select class="form-select" name="shipperID" required>
+                <option value="0">-- Chọn người giao hàng --</option>
+                @foreach (var s in shippers)
+                {
+                    <option value="@s.ShipperID">@s.ShipperName – @s.Phone</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-info text-white">
+            <i class="bi bi-bicycle me-1"></i>Giao hàng
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+    </div>
+</form>

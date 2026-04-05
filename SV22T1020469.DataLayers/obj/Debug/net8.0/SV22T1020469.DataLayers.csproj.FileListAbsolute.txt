@@ -1,0 +1,16 @@
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\bin\Debug\net8.0\SV22T1020469.DataLayers.deps.json
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\bin\Debug\net8.0\SV22T1020469.DataLayers.dll
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\bin\Debug\net8.0\SV22T1020469.DataLayers.pdb
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\bin\Debug\net8.0\SV22T1020469.Models.dll
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\bin\Debug\net8.0\SV22T1020469.Models.pdb
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\SV22T1020469.DataLayers.csproj.AssemblyReference.cache
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\SV22T1020469.DataLayers.GeneratedMSBuildEditorConfig.editorconfig
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\SV22T1020469.DataLayers.AssemblyInfoInputs.cache
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\SV22T1020469.DataLayers.AssemblyInfo.cs
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\SV22T1020469.DataLayers.csproj.CoreCompileInputs.cache
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\SV22T1020469.DataLayers.sourcelink.json
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\SV22T102.A55A62E3.Up2Date
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\SV22T1020469.DataLayers.dll
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\refint\SV22T1020469.DataLayers.dll
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\SV22T1020469.DataLayers.pdb
+C:\monthayphong\SV22T1020469\SV22T1020469.DataLayers\obj\Debug\net8.0\ref\SV22T1020469.DataLayers.dll

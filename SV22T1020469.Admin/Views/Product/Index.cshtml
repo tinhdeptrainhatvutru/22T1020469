@@ -1,0 +1,147 @@
+@model SV22T1020469.Models.Common.PagedResult<SV22T1020469.Models.Catalog.Product>
+@{
+    ViewBag.Title = "Quản lý Mặt hàng";
+    int totalPages = Model.PageCount;
+    int currentPage = Model.Page;
+    int windowSize = 2; // 2 trang mỗi bên => tối đa 5 trang quanh current
+
+    int startPage = Math.Max(1, currentPage - windowSize);
+    int endPage = Math.Min(totalPages, currentPage + windowSize);
+
+    // Bù thiếu để luôn cố gắng hiển thị tối đa 5 trang quanh current
+    if (endPage - startPage + 1 < 5)
+    {
+        int missing = 5 - (endPage - startPage + 1);
+        if (startPage > 1) startPage = Math.Max(1, startPage - missing);
+        else if (endPage < totalPages) endPage = Math.Min(totalPages, endPage + missing);
+    }
+}
+
+@section PageToolBar {
+    <a href="~/Product/Create" class="btn btn-primary d-flex align-items-center ms-1"><i class="bi bi-plus-circle me-1"></i> Bổ sung</a>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-3">
+        <i class="bi bi-exclamation-triangle me-1"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form id="formSearch" action="~/Product" method="get">
+            <div class="row g-2">
+                <div class="col-sm-3">
+                    <select class="form-select" name="categoryID" asp-items="ViewBag.Categories"></select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="form-select" name="supplierID" asp-items="ViewBag.Suppliers"></select>
+                </div>
+                <div class="col-sm-6 input-group">
+                    <input type="text" name="searchValue" value="@ViewBag.SearchValue" class="form-control" placeholder="Nhập tên mặt hàng..." autofocus />
+                    <button type="submit" class="btn btn-info d-flex align-items-center"><i class="bi bi-search me-1"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mb-2 text-muted">Danh sách này có <strong>@Model.RowCount</strong> mặt hàng</div>
+
+<div class="card">
+    <div class="card-body p-1 table-responsive">
+        <table class="table table-bordered table-hover mb-0 align-middle">
+            <thead class="table-secondary text-center">
+                <tr>
+                    <th style="width:80px">Ảnh</th>
+                    <th>Tên mặt hàng</th>
+                    <th>Giá bán</th>
+                    <th>Tồn kho</th>
+                    <th style="width:120px">Trạng thái</th>
+                    <th style="width:100px">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.DataItems)
+                {
+                    <tr>
+                        <td class="text-center">
+                            <img src="@((string.IsNullOrEmpty(item.Photo))
+                                        ? "/images/nophoto.svg"
+                                        : (item.Photo.StartsWith("nophoto.", StringComparison.OrdinalIgnoreCase)
+                                            ? $"/images/{item.Photo}"
+                                            : (item.Photo.StartsWith("products/", StringComparison.OrdinalIgnoreCase)
+                                                ? $"/images/{item.Photo}"
+                                                : $"/images/products/{item.Photo}")))"
+                                 onerror="this.src='/images/nophoto.svg'"
+                                 style="width:40px; height:40px; object-fit:cover;" />
+                        </td>
+                        <td>
+                            <div class="fw-bold">@item.ProductName</div>
+                            <small class="text-muted">ĐVT: @item.Unit</small>
+                        </td>
+                        <td class="text-end text-success fw-bold">@item.Price.ToString("N0")</td>
+                        <td class="text-center fw-bold">@item.Quantity</td>
+                        <td class="text-center">
+                            @if (item.IsSelling == true)
+                            {
+                                <span class="badge bg-success">Đang bán</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge bg-secondary">Ngừng bán</span>
+                            }
+                        </td>
+                        <td class="text-center text-nowrap">
+                            <a href="~/Product/Edit/@item.ProductID" class="btn btn-sm btn-info" title="Sửa"><i class="bi bi-pencil-square"></i></a>
+                            <a href="~/Product/Delete/@item.ProductID" class="btn btn-sm btn-danger" title="Xóa"><i class="bi bi-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.PageCount > 1)
+    {
+        <div class="card-footer">
+            <ul class="pagination justify-content-center mb-0">
+                <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       href="~/Product?categoryID=@ViewBag.CategoryID&supplierID=@ViewBag.SupplierID&searchValue=@ViewBag.SearchValue&page=1"
+                       aria-label="Trang đầu">&laquo;&laquo;</a>
+                </li>
+                <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       href="~/Product?categoryID=@ViewBag.CategoryID&supplierID=@ViewBag.SupplierID&searchValue=@ViewBag.SearchValue&page=@(Model.Page - 1)"
+                       aria-label="Trang trước">&laquo;</a>
+                </li>
+
+                @for (int p = startPage; p <= endPage; p++)
+                {
+                    if (p == 1 || p == Model.PageCount) { continue; }
+
+                    <li class="page-item @(p == Model.Page ? "active" : "")">
+                        <a class="page-link"
+                           href="~/Product?categoryID=@ViewBag.CategoryID&supplierID=@ViewBag.SupplierID&searchValue=@ViewBag.SearchValue&page=@p">@p</a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.Page == Model.PageCount ? "disabled" : "")">
+                    <a class="page-link"
+                       href="~/Product?categoryID=@ViewBag.CategoryID&supplierID=@ViewBag.SupplierID&searchValue=@ViewBag.SearchValue&page=@(Model.Page + 1)"
+                       aria-label="Trang tiếp">&raquo;</a>
+                </li>
+
+                <li class="page-item @(Model.Page == Model.PageCount ? "disabled" : "")">
+                    <a class="page-link"
+                       href="~/Product?categoryID=@ViewBag.CategoryID&supplierID=@ViewBag.SupplierID&searchValue=@ViewBag.SearchValue&page=@Model.PageCount"
+                       aria-label="Trang cuối">&raquo;&raquo;</a>
+                </li>
+            </ul>
+        </div>
+    }
+</div>

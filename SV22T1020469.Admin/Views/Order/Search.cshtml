@@ -1,0 +1,170 @@
+@model SV22T1020469.Models.Common.PagedResult<SV22T1020469.Models.Sales.OrderViewInfo>
+@using SV22T1020469.Models.Sales
+@{
+    Layout = null;
+
+    int totalPages = Model.PageCount;
+    int currentPage = Model.Page;
+    int windowSize = 2; // 2 trang mỗi bên => tối đa 5 trang quanh current
+
+    int startPage = Math.Max(1, currentPage - windowSize);
+    int endPage = Math.Min(totalPages, currentPage + windowSize);
+
+    if (endPage - startPage + 1 < 5)
+    {
+        int missing = 5 - (endPage - startPage + 1);
+        if (startPage > 1) startPage = Math.Max(1, startPage - missing);
+        else if (endPage < totalPages) endPage = Math.Min(totalPages, endPage + missing);
+    }
+}
+
+<div class="mb-2 text-muted small">
+    Tìm thấy <strong>@Model.RowCount</strong> đơn hàng
+</div>
+
+<div class="card">
+    <div class="card-body p-1 table-responsive">
+        <table class="table table-bordered table-hover mb-0 align-middle">
+            <thead class="table-secondary">
+                <tr>
+                    <th style="width:160px">Ngày đặt</th>
+                    <th>Khách hàng</th>
+                    <th style="width:115px">Điện thoại</th>
+                    <th style="width:160px">Ngày duyệt</th>
+                    <th style="width:140px">Nhân viên</th>
+                    <th class="text-end" style="width:130px">Tổng tiền (đ)</th>
+                    <th class="text-center" style="width:130px">Trạng thái</th>
+                    <th style="width:55px"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.DataItems)
+                {
+                    <tr>
+                        <td>@item.OrderTime.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <strong>@item.CustomerName</strong>
+                            @if (!string.IsNullOrEmpty(item.CustomerAddress))
+                            {
+                                <br /><small class="text-muted">@item.CustomerAddress</small>
+                            }
+                        </td>
+                        <td>@item.CustomerPhone</td>
+                        <td>
+                            @(item.AcceptTime.HasValue
+                                ? item.AcceptTime.Value.ToString("dd/MM/yyyy HH:mm")
+                                : "—")
+                        </td>
+                        <td>@(string.IsNullOrEmpty(item.EmployeeName) ? "—" : item.EmployeeName)</td>
+                        <td class="text-end fw-bold text-danger">
+                            @item.TotalAmount.ToString("N0")
+                        </td>
+                        <td class="text-center">
+                            @switch (item.Status)
+                            {
+                                case OrderStatusEnum.New:
+                                    <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                                    break;
+                                case OrderStatusEnum.Accepted:
+                                    <span class="badge bg-primary">Đã duyệt</span>
+                                    break;
+                                case OrderStatusEnum.Shipping:
+                                    <span class="badge bg-info text-dark">Đang giao</span>
+                                    break;
+                                case OrderStatusEnum.Completed:
+                                    <span class="badge bg-success">Hoàn tất</span>
+                                    break;
+                                case OrderStatusEnum.Cancelled:
+                                    <span class="badge bg-secondary">Đã hủy</span>
+                                    break;
+                                case OrderStatusEnum.Rejected:
+                                    <span class="badge bg-danger">Từ chối</span>
+                                    break;
+                            }
+                        </td>
+                        <td class="text-center">
+                            <a href="/Order/Details/@item.OrderID"
+                               class="btn btn-sm btn-primary"
+                               title="Xem chi tiết">
+                                <i class="bi bi-receipt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card-footer">
+        <ul class="pagination justify-content-center mb-0">
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                @if (currentPage == 1)
+                {
+                    <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
+                }
+                else
+                {
+                    <a class="page-link" href="javascript:;"
+                       onclick="paginationSearch(event, document.getElementById('formSearch'), 1)"
+                       aria-label="Trang đầu">&laquo;&laquo;</a>
+                }
+            </li>
+
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                @if (currentPage == 1)
+                {
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                }
+                else
+                {
+                    <a class="page-link" href="javascript:;"
+                       onclick="paginationSearch(event, document.getElementById('formSearch'), @(currentPage - 1))"
+                       aria-label="Trang trước">&laquo;</a>
+                }
+            </li>
+
+            @for (int p = startPage; p <= endPage; p++)
+            {
+                if (p == 1 || p == totalPages) { continue; }
+
+                if (p == currentPage)
+                {
+                    <li class="page-item active"><span class="page-link">@p</span></li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:;"
+                           onclick="paginationSearch(event, document.getElementById('formSearch'), @p)">@p</a>
+                    </li>
+                }
+            }
+
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                @if (currentPage == totalPages)
+                {
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                }
+                else
+                {
+                    <a class="page-link" href="javascript:;"
+                       onclick="paginationSearch(event, document.getElementById('formSearch'), @(currentPage + 1))"
+                       aria-label="Trang tiếp">&raquo;</a>
+                }
+            </li>
+
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                @if (currentPage == totalPages)
+                {
+                    <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>
+                }
+                else
+                {
+                    <a class="page-link" href="javascript:;"
+                       onclick="paginationSearch(event, document.getElementById('formSearch'), @totalPages)"
+                       aria-label="Trang cuối">&raquo;&raquo;</a>
+                }
+            </li>
+        </ul>
+    </div>
+</div>

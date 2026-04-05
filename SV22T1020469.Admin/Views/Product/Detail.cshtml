@@ -1,0 +1,113 @@
+@{
+    ViewBag.Title = "Chi tiết mặt hàng";
+}
+
+<!-- ===== Product Info ===== -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">Thông tin mặt hàng</h5>
+    </div>
+    <div class="card-body">
+        <div class="row mb-2">
+            <div class="col-md-3 fw-bold">Tên mặt hàng:</div>
+            <div class="col-md-9">Áo thun nam cao cấp</div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3 fw-bold">Mô tả:</div>
+            <div class="col-md-9">
+                Áo thun cotton 100%, thoáng mát, phù hợp mùa hè.
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3 fw-bold">Nhà cung cấp:</div>
+            <div class="col-md-9">Công ty TNHH ABC</div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3 fw-bold">Loại mặt hàng:</div>
+            <div class="col-md-9">Thời trang nam</div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3 fw-bold">Số lượng:</div>
+            <div class="col-md-9">120</div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3 fw-bold">Giá bán:</div>
+            <div class="col-md-9 text-danger fw-bold">250,000 VNĐ</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Product Photos ===== -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">Hình ảnh sản phẩm</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <img src="https://via.placeholder.com/300x300"
+                     class="img-fluid rounded border"
+                     onerror="this.src='/images/nophoto.svg'"
+                     style="object-fit:cover"
+                     alt="Product Photo">
+            </div>
+            <div class="col-md-3">
+                <img src="https://via.placeholder.com/300x300"
+                     class="img-fluid rounded border"
+                     onerror="this.src='/images/nophoto.svg'"
+                     style="object-fit:cover"
+                     alt="Product Photo">
+            </div>
+            <div class="col-md-3">
+                <img src="https://via.placeholder.com/300x300"
+                     class="img-fluid rounded border"
+                     onerror="this.src='/images/nophoto.svg'"
+                     style="object-fit:cover"
+                     alt="Product Photo">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Product Attributes ===== -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Thuộc tính sản phẩm</h5>
+    </div>
+    <div class="card-body table-responsive p-0">
+        <table class="table table-bordered table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Tên thuộc tính</th>
+                    <th>Giá trị</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Màu sắc</td>
+                    <td>Đen</td>
+                </tr>
+                <tr>
+                    <td>Kích thước</td>
+                    <td>L</td>
+                </tr>
+                <tr>
+                    <td>Chất liệu</td>
+                    <td>Cotton</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ===== Actions ===== -->
+<div class="mt-4 text-end">
+    <a href="~/Product/Index" class="btn btn-secondary">
+        Quay lại
+    </a>
+</div>

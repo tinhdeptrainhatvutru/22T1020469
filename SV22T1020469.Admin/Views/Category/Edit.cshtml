@@ -1,0 +1,30 @@
+@model SV22T1020469.Models.Catalog.Category
+
+@section PageToolBar {
+    <button type="submit" form="formEdit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Lưu dữ liệu</button>
+    <a href="~/Category" class="btn btn-secondary ms-1"><i class="bi bi-arrow-left"></i> Quay lại</a>
+}
+
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header"><h5 class="card-title mb-0"><i class="bi bi-tags me-2"></i> Thông tin loại hàng</h5></div>
+            <div class="card-body">
+                <form id="formEdit" action="~/Category/Save" method="post">
+                    <input type="hidden" name="CategoryID" value="@Model.CategoryID" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Tên loại hàng <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="CategoryName" value="@Model.CategoryName" autofocus />
+                        @Html.ValidationMessage("CategoryName", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Mô tả</label>
+                        <textarea class="form-control" rows="4" name="Description">@Model.Description</textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

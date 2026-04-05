@@ -1,0 +1,157 @@
+﻿@{
+    ViewData["Title"] = "Cập nhật đơn hàng";
+}
+
+<form method="post">
+
+    <input type="hidden" name="OrderID" value="1" />
+
+    <!-- ================= THÔNG TIN ĐƠN ================= -->
+    <div class="card mb-3">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    Đơn hàng #1
+                </h5>
+                <span class="badge bg-warning">
+                    Chờ duyệt
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= THÊM SẢN PHẨM ================= -->
+    <div class="card mb-3">
+        <div class="card-body">
+
+            <h5 class="mb-3">1. Thêm sản phẩm</h5>
+
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <input type="text"
+                           name="SearchValue"
+                           class="form-control"
+                           placeholder="Tìm sản phẩm...">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit"
+                            name="action"
+                            value="search"
+                            class="btn btn-primary w-100">
+                        Tìm
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= DANH SÁCH SẢN PHẨM ================= -->
+    <div class="card mb-3">
+        <div class="card-body">
+
+            <h5 class="mb-3">2. Sản phẩm trong đơn</h5>
+
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th width="120">Số lượng</th>
+                        <th>Giá</th>
+                        <th>Thành tiền</th>
+                        <th width="80"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            iPhone 15
+                            <input type="hidden" name="OrderDetails[0].ProductID" value="1" />
+                        </td>
+                        <td>
+                            <input type="number"
+                                   name="OrderDetails[0].Quantity"
+                                   value="1"
+                                   min="1"
+                                   class="form-control">
+                        </td>
+                        <td>
+                            25.000.000
+                            <input type="hidden" name="OrderDetails[0].SalePrice" value="25000000" />
+                        </td>
+                        <td>25.000.000</td>
+                        <td class="text-center">
+                            <button type="submit"
+                                    name="action"
+                                    value="remove"
+                                    class="btn btn-danger btn-sm">
+                                Xóa
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="text-end">
+                <h5>
+                    Tổng tiền:
+                    <span class="text-danger">25.000.000</span>
+                </h5>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= THÔNG TIN GIAO HÀNG ================= -->
+    <div class="card">
+        <div class="card-body">
+
+            <h5 class="mb-3">3. Thông tin giao hàng</h5>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Khách hàng</label>
+                    <select name="CustomerID" class="form-select" required>
+                        <option value="1" selected>Nguyễn Văn A</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Tỉnh / Thành</label>
+                    <select name="DeliveryProvince" class="form-select" required>
+                        <option value="Hà Nội" selected>Hà Nội</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Địa chỉ</label>
+                    <input type="text"
+                           name="DeliveryAddress"
+                           value="123 Trần Phú, Hà Nội"
+                           class="form-control"
+                           required>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="~/Order" class="btn btn-secondary">
+                    Quay lại
+                </a>
+
+                <button type="submit"
+                        name="action"
+                        value="update"
+                        class="btn btn-primary btn-lg">
+                    Lưu thay đổi
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</form>

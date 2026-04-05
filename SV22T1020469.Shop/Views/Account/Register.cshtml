@@ -1,0 +1,137 @@
+@model SV22T1020469.Models.Partner.Customer
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center mt-3">
+    <div class="col-md-7 col-lg-6">
+        <div class="card shop-section-card border-0">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-plus text-success" style="font-size:3rem"></i>
+                    <h4 class="fw-bold mt-2">Tạo tài khoản mới</h4>
+                    <p class="text-muted small">Tham gia NKTinhShop để mua sắm dễ dàng hơn</p>
+                </div>
+
+                <form method="post" asp-controller="Account" asp-action="Register" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="All" class="alert alert-danger py-2 small"
+                         style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none")"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
+                            <input asp-for="CustomerName" class="form-control" required
+                                   placeholder="Nguyễn Văn A" maxlength="100" autofocus />
+                            <span asp-validation-for="CustomerName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tên giao dịch</label>
+                            <input asp-for="ContactName" class="form-control"
+                                   placeholder="Tên hiển thị, biệt danh..." maxlength="100" />
+                            <span asp-validation-for="ContactName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" type="email" class="form-control" required
+                                       placeholder="example@email.com" maxlength="150" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Mật khẩu <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input name="password" type="password" id="pwd1" class="form-control" required
+                                       placeholder="Tối thiểu 6 ký tự" minlength="6" />
+                                <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePwd('pwd1',this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            @Html.ValidationMessage("Password", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input name="confirmPassword" type="password" id="pwd2" class="form-control" required
+                                       placeholder="Nhập lại mật khẩu" />
+                                <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePwd('pwd2',this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            @Html.ValidationMessage("ConfirmPassword", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Số điện thoại</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-phone"></i></span>
+                                <input asp-for="Phone" class="form-control" placeholder="0912345678"
+                                       maxlength="20" pattern="[0-9+\-\s]{7,20}" />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tỉnh/Thành phố</label>
+                            <select asp-for="Province" class="form-select">
+                                <option value="">-- Chọn tỉnh/thành --</option>
+                                @foreach (var p in new[]{"An Giang","Bà Rịa – Vũng Tàu","Bắc Giang","Bắc Kạn","Bạc Liêu","Bắc Ninh","Bến Tre","Bình Định","Bình Dương","Bình Phước","Bình Thuận","Cà Mau","Cần Thơ","Cao Bằng","Đà Nẵng","Đắk Lắk","Đắk Nông","Điện Biên","Đồng Nai","Đồng Tháp","Gia Lai","Hà Giang","Hà Nam","Hà Nội","Hà Tĩnh","Hải Dương","Hải Phòng","Hậu Giang","Hòa Bình","Hưng Yên","Khánh Hòa","Kiên Giang","Kon Tum","Lai Châu","Lâm Đồng","Lạng Sơn","Lào Cai","Long An","Nam Định","Nghệ An","Ninh Bình","Ninh Thuận","Phú Thọ","Phú Yên","Quảng Bình","Quảng Nam","Quảng Ngãi","Quảng Ninh","Quảng Trị","Sóc Trăng","Sơn La","Tây Ninh","Thái Bình","Thái Nguyên","Thanh Hóa","Thừa Thiên Huế","Tiền Giang","TP. Hồ Chí Minh","Trà Vinh","Tuyên Quang","Vĩnh Long","Vĩnh Phúc","Yên Bái"})
+                                {
+                                    <option value="@p">@p</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Province" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Địa chỉ</label>
+                            <input asp-for="Address" class="form-control"
+                                   placeholder="Số nhà, tên đường, phường/xã..." maxlength="200" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold">
+                            <i class="bi bi-person-check me-2"></i>Đăng ký ngay
+                        </button>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <span class="text-muted small">Đã có tài khoản?</span>
+                        <a asp-controller="Account" asp-action="Login" class="fw-semibold ms-1">Đăng nhập</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function togglePwd(inputId, btn) {
+    const inp = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    icon.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+}
+
+// Client-side confirm password match
+document.querySelector('form').addEventListener('submit', function(e) {
+    const p1 = document.getElementById('pwd1').value;
+    const p2 = document.getElementById('pwd2').value;
+    if (p1 !== p2) {
+        e.preventDefault();
+        alert('Xác nhận mật khẩu không khớp!');
+        document.getElementById('pwd2').focus();
+    }
+});
+</script>
+}

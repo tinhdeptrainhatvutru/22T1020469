@@ -1,0 +1,101 @@
+@model SV22T1020469.Models.Common.PagedResult<SV22T1020469.Models.Catalog.Product>
+@{
+    Layout = null;
+
+    int totalPages = Model.PageCount;
+    int currentPage = Model.Page;
+    int windowSize = 2; // 2 trang mỗi bên => tối đa 5 trang quanh current
+
+    int startPage = Math.Max(1, currentPage - windowSize);
+    int endPage = Math.Min(totalPages, currentPage + windowSize);
+
+    if (endPage - startPage + 1 < 5)
+    {
+        int missing = 5 - (endPage - startPage + 1);
+        if (startPage > 1) startPage = Math.Max(1, startPage - missing);
+        else if (endPage < totalPages) endPage = Math.Min(totalPages, endPage + missing);
+    }
+}
+
+@foreach (var item in Model.DataItems)
+{
+    <form class="border rounded p-2 mb-2" onsubmit="addCartItem(event,this)">
+        <strong class="small d-block mb-1">@item.ProductName</strong>
+        <input type="hidden" name="productID" value="@item.ProductID" />
+        <div class="row g-1">
+            <div class="col-4">
+        <img src="@(string.IsNullOrEmpty(item.Photo)
+                        ? "/images/nophoto.svg"
+                        : (item.Photo.StartsWith("nophoto.", StringComparison.OrdinalIgnoreCase)
+                            ? $"/images/{item.Photo}"
+                            : (item.Photo.StartsWith("products/", StringComparison.OrdinalIgnoreCase)
+                                ? $"/images/{item.Photo}"
+                                : $"/images/products/{item.Photo}")))"
+                     class="img-fluid border rounded" style="max-height:80px;object-fit:cover"
+                     onerror="this.src='/images/nophoto.svg'" />
+            </div>
+            <div class="col-8">
+                <div class="row g-1 mb-1">
+                    <div class="col-7">
+                        <label class="form-label mb-0" style="font-size:.75rem">Giá bán (đ)</label>
+                        <input class="form-control form-control-sm money-input"
+                               name="salePrice" value="@item.Price" />
+                    </div>
+                    <div class="col-5">
+                        <label class="form-label mb-0" style="font-size:.75rem">Số lượng</label>
+                        <input type="number" name="quantity" min="1" value="1"
+                               class="form-control form-control-sm" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-sm btn-success w-100">
+                    <i class="bi bi-cart-plus"></i> Thêm
+                </button>
+            </div>
+        </div>
+    </form>
+}
+
+@if (!Model.DataItems.Any())
+{
+    <div class="text-muted text-center py-3 small">
+        <i class="bi bi-search"></i> Không tìm thấy mặt hàng
+    </div>
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mt-1 gap-1">
+    <div class="d-flex align-items-center gap-1">
+        <a href="javascript:;" class="btn btn-xs btn-outline-secondary py-0 px-2 @(currentPage == 1 ? "d-none" : "")"
+           style="font-size:.75rem"
+           onclick="paginationSearch(event, document.getElementById('formSearch'), 1)" aria-label="Trang đầu">&laquo;&laquo;</a>
+        <a href="javascript:;" class="btn btn-xs btn-outline-secondary py-0 px-2 @(currentPage == 1 ? "d-none" : "")"
+           style="font-size:.75rem"
+           onclick="paginationSearch(event, document.getElementById('formSearch'), @(currentPage - 1))" aria-label="Trang trước">&laquo;</a>
+    </div>
+
+    <div class="d-flex align-items-center gap-1">
+        @for (int p = startPage; p <= endPage; p++)
+        {
+            if (p == 1 || p == totalPages) { continue; }
+
+            if (p == currentPage)
+            {
+                <span class="btn btn-xs btn-secondary py-0 px-2" style="font-size:.75rem">@p</span>
+            }
+            else
+            {
+                <a href="javascript:;" class="btn btn-xs btn-outline-secondary py-0 px-2 shop-admin-page"
+                   style="font-size:.75rem"
+                   onclick="paginationSearch(event, document.getElementById('formSearch'), @p)">@p</a>
+            }
+        }
+    </div>
+
+    <div class="d-flex align-items-center gap-1">
+        <a href="javascript:;" class="btn btn-xs btn-outline-secondary py-0 px-2 @(currentPage == totalPages ? "d-none" : "")"
+           style="font-size:.75rem"
+           onclick="paginationSearch(event, document.getElementById('formSearch'), @(currentPage + 1))" aria-label="Trang tiếp">&raquo;</a>
+        <a href="javascript:;" class="btn btn-xs btn-outline-secondary py-0 px-2 @(currentPage == totalPages ? "d-none" : "")"
+           style="font-size:.75rem"
+           onclick="paginationSearch(event, document.getElementById('formSearch'), @totalPages)" aria-label="Trang cuối">&raquo;&raquo;</a>
+    </div>
+</div>

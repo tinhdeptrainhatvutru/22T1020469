@@ -1,0 +1,44 @@
+@model SV22T1020469.Models.Sales.OrderDetailViewInfo
+@{ Layout = null; }
+
+<div class="modal-header">
+    <strong class="modal-title">Cập nhật mặt hàng</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+    <form id="formEditCartItem" onsubmit="updateCartItem(event,this)">
+        <input type="hidden" asp-for="ProductID" />
+        <div class="row align-items-center">
+            <div class="col-8">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Mặt hàng</label>
+                    <input class="form-control-plaintext fw-bold" value="@Model.ProductName" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Số lượng</label>
+                    <input type="number" asp-for="Quantity" class="form-control" min="1" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Đơn giá (đ)</label>
+                    <input type="text" asp-for="SalePrice" class="form-control money-input" />
+                </div>
+            </div>
+            <div class="col-4 text-center">
+                @if (!string.IsNullOrEmpty(Model.Photo))
+                {
+                    <img src="@(Model.Photo.StartsWith("nophoto.", StringComparison.OrdinalIgnoreCase)
+                                ? $"/images/{Model.Photo}"
+                                : (Model.Photo.StartsWith("products/", StringComparison.OrdinalIgnoreCase)
+                                    ? $"/images/{Model.Photo}"
+                                    : $"/images/products/{Model.Photo}"))"
+                         onerror="this.src='/images/nophoto.svg'"
+                         class="img-thumbnail" style="max-height:150px;object-fit:cover" />
+                }
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="submit" form="formEditCartItem" class="btn btn-primary">Cập nhật</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+</div>

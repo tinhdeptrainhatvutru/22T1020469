@@ -1,0 +1,12 @@
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\bin\Debug\net8.0\SV22T1020469.Models.deps.json
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\bin\Debug\net8.0\SV22T1020469.Models.dll
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\bin\Debug\net8.0\SV22T1020469.Models.pdb
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\obj\Debug\net8.0\SV22T1020469.Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\obj\Debug\net8.0\SV22T1020469.Models.AssemblyInfoInputs.cache
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\obj\Debug\net8.0\SV22T1020469.Models.AssemblyInfo.cs
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\obj\Debug\net8.0\SV22T1020469.Models.csproj.CoreCompileInputs.cache
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\obj\Debug\net8.0\SV22T1020469.Models.sourcelink.json
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\obj\Debug\net8.0\SV22T1020469.Models.dll
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\obj\Debug\net8.0\refint\SV22T1020469.Models.dll
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\obj\Debug\net8.0\SV22T1020469.Models.pdb
+C:\monthayphong\SV22T1020469\SV22T1020469.Models\obj\Debug\net8.0\ref\SV22T1020469.Models.dll

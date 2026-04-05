@@ -1,0 +1,82 @@
+@model SV22T1020469.Models.Partner.Customer
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center mt-3">
+    <div class="col-md-8">
+
+        <div class="card shop-section-card border-0">
+            <div class="card-header bg-white d-flex align-items-center gap-2">
+                <i class="bi bi-person-circle text-primary fs-4"></i>
+                <h5 class="mb-0">Hồ sơ cá nhân</h5>
+                <a asp-controller="Account" asp-action="ChangePassword"
+                   class="btn btn-outline-warning btn-sm ms-auto">
+                    <i class="bi bi-key me-1"></i>Đổi mật khẩu
+                </a>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" asp-controller="Account" asp-action="Profile">
+                    <div asp-validation-summary="All" class="alert alert-danger py-2 small"
+                         style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none")"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
+                            <input name="CustomerName" class="form-control" required
+                                   value="@Model.CustomerName" maxlength="100" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tên giao dịch</label>
+                            <input name="ContactName" class="form-control"
+                                   value="@Model.ContactName" maxlength="100" />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input class="form-control bg-light" value="@Model.Email" readonly />
+                            <div class="form-text">Email không thể thay đổi.</div>
+                            <input type="hidden" name="Email" value="@Model.Email" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Số điện thoại</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-phone"></i></span>
+                                <input name="Phone" class="form-control"
+                                       value="@Model.Phone" maxlength="20" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tỉnh/Thành phố</label>
+                            <select name="Province" class="form-select">
+                                <option value="">-- Chọn tỉnh/thành --</option>
+                                @foreach (var p in new[]{"An Giang","Bà Rịa – Vũng Tàu","Bắc Giang","Bắc Kạn","Bạc Liêu","Bắc Ninh","Bến Tre","Bình Định","Bình Dương","Bình Phước","Bình Thuận","Cà Mau","Cần Thơ","Cao Bằng","Đà Nẵng","Đắk Lắk","Đắk Nông","Điện Biên","Đồng Nai","Đồng Tháp","Gia Lai","Hà Giang","Hà Nam","Hà Nội","Hà Tĩnh","Hải Dương","Hải Phòng","Hậu Giang","Hòa Bình","Hưng Yên","Khánh Hòa","Kiên Giang","Kon Tum","Lai Châu","Lâm Đồng","Lạng Sơn","Lào Cai","Long An","Nam Định","Nghệ An","Ninh Bình","Ninh Thuận","Phú Thọ","Phú Yên","Quảng Bình","Quảng Nam","Quảng Ngãi","Quảng Ninh","Quảng Trị","Sóc Trăng","Sơn La","Tây Ninh","Thái Bình","Thái Nguyên","Thanh Hóa","Thừa Thiên Huế","Tiền Giang","TP. Hồ Chí Minh","Trà Vinh","Tuyên Quang","Vĩnh Long","Vĩnh Phúc","Yên Bái"})
+                                {
+                                    <option selected="@(p == Model.Province)">@p</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Địa chỉ</label>
+                            <input name="Address" class="form-control"
+                                   value="@Model.Address" maxlength="200"
+                                   placeholder="Số nhà, tên đường, phường/xã..." />
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary fw-bold px-4">
+                            <i class="bi bi-save me-1"></i>Lưu thay đổi
+                        </button>
+                        <a asp-controller="Order" asp-action="History" class="btn btn-outline-secondary">
+                            <i class="bi bi-clock-history me-1"></i>Lịch sử đơn hàng
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,4 @@
+/* Scoped layout overrides — global theme lives in wwwroot/css/site.css */
+a.navbar-brand[b-7tpkae1ruw] {
+  white-space: normal;
+}

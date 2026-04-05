@@ -1,0 +1,117 @@
+@model List<SV22T1020469.Shop.Models.CartItem>
+@{
+    ViewData["Title"] = "Xác nhận đặt hàng";
+    Layout = "_Layout";
+    string defaultProvince = ViewBag.DefaultProvince ?? "";
+    string defaultAddress  = ViewBag.DefaultAddress  ?? "";
+}
+
+<h4 class="fw-bold mb-4">
+    <i class="bi bi-bag-check me-2 text-success"></i>Xác nhận đặt hàng
+</h4>
+
+<div class="row g-4">
+    <!-- FORM GIAO HÀNG -->
+    <div class="col-lg-7">
+        <div class="card shop-section-card">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-geo-alt me-1 text-primary"></i>Thông tin giao hàng
+            </div>
+            <div class="card-body p-4">
+                <form method="post" asp-controller="Order" asp-action="Checkout">
+
+                    <div asp-validation-summary="All" class="alert alert-danger py-2 small"
+                         style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none")"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            Tỉnh / Thành phố <span class="text-danger">*</span>
+                        </label>
+                        <select name="deliveryProvince" class="form-select" required>
+                            <option value="">-- Chọn tỉnh/thành phố --</option>
+                            @foreach (var p in new[]{"An Giang","Bà Rịa – Vũng Tàu","Bắc Giang","Bắc Kạn","Bạc Liêu","Bắc Ninh","Bến Tre","Bình Định","Bình Dương","Bình Phước","Bình Thuận","Cà Mau","Cần Thơ","Cao Bằng","Đà Nẵng","Đắk Lắk","Đắk Nông","Điện Biên","Đồng Nai","Đồng Tháp","Gia Lai","Hà Giang","Hà Nam","Hà Nội","Hà Tĩnh","Hải Dương","Hải Phòng","Hậu Giang","Hòa Bình","Hưng Yên","Khánh Hòa","Kiên Giang","Kon Tum","Lai Châu","Lâm Đồng","Lạng Sơn","Lào Cai","Long An","Nam Định","Nghệ An","Ninh Bình","Ninh Thuận","Phú Thọ","Phú Yên","Quảng Bình","Quảng Nam","Quảng Ngãi","Quảng Ninh","Quảng Trị","Sóc Trăng","Sơn La","Tây Ninh","Thái Bình","Thái Nguyên","Thanh Hóa","Thừa Thiên Huế","Tiền Giang","TP. Hồ Chí Minh","Trà Vinh","Tuyên Quang","Vĩnh Long","Vĩnh Phúc","Yên Bái"})
+                            {
+                                <option value="@p" selected="@(p == defaultProvince)">@p</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Địa chỉ giao hàng chi tiết <span class="text-danger">*</span>
+                        </label>
+                        <textarea name="deliveryAddress" class="form-control" rows="3" required
+                                  placeholder="Số nhà, tên đường, phường/xã, quận/huyện...">@defaultAddress</textarea>
+                        <div class="form-text">Vui lòng nhập chính xác để đảm bảo giao hàng đúng địa chỉ.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Ghi chú (nếu có)</label>
+                        <textarea name="customerNote" class="form-control" rows="3"
+                                  placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao, ghi chú kích thước/màu..."></textarea>
+                        <div class="form-text">Ghi chú sẽ được nhân viên đọc khi duyệt đơn.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold">
+                        <i class="bi bi-check-circle me-1"></i>Xác nhận đặt hàng
+                    </button>
+
+                    <a asp-controller="Cart" asp-action="Index"
+                       class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="bi bi-arrow-left me-1"></i>Quay lại giỏ hàng
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TÓM TẮT ĐƠN HÀNG -->
+    <div class="col-lg-5">
+        <div class="card shop-section-card">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-list-check me-1 text-success"></i>Đơn hàng của bạn
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var item in Model)
+                {
+                    <li class="list-group-item py-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="@(string.IsNullOrEmpty(item.Photo)
+                                    ? "/images/nophoto.svg"
+                                    : (item.Photo.StartsWith("nophoto.", StringComparison.OrdinalIgnoreCase)
+                                        ? $"/images/{item.Photo}"
+                                        : (item.Photo.StartsWith("products/", StringComparison.OrdinalIgnoreCase)
+                                            ? $"/images/{item.Photo}"
+                                            : $"/images/products/{item.Photo}")))"
+                                 style="width:50px;height:50px;object-fit:cover;border-radius:6px"
+                                 onerror="this.src='/images/nophoto.svg'" />
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold small">@item.ProductName</div>
+                                <div class="text-muted small">
+                                    @item.Quantity × @item.SalePrice.ToString("N0") đ
+                                </div>
+                            </div>
+                            <span class="fw-bold price-tag text-nowrap">
+                                @item.Total.ToString("N0") đ
+                            </span>
+                        </div>
+                    </li>
+                }
+                <li class="list-group-item bg-light py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">Tổng cộng</span>
+                        <span class="fs-5 fw-bold price-tag">
+                            @Model.Sum(x => x.Total).ToString("N0") đ
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="alert alert-info mt-3 small">
+            <i class="bi bi-info-circle me-1"></i>
+            Sau khi đặt hàng thành công, nhân viên sẽ liên hệ xác nhận và giao hàng trong
+            <strong>1-3 ngày làm việc</strong>.
+        </div>
+    </div>
+</div>

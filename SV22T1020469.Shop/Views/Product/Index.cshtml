@@ -1,0 +1,203 @@
+@model SV22T1020469.Models.Common.PagedResult<SV22T1020469.Models.Catalog.Product>
+@using SV22T1020469.Models.Catalog
+@{
+    ViewData["Title"] = "Sản phẩm";
+    var categories = ViewBag.Categories as List<SV22T1020469.Models.Catalog.Category>
+                     ?? new List<SV22T1020469.Models.Catalog.Category>();
+    string searchValue = ViewBag.SearchValue ?? "";
+    int categoryID = (int)(ViewBag.CategoryID ?? 0);
+    decimal minPrice = (decimal)(ViewBag.MinPrice ?? 0m);
+    decimal maxPrice = (decimal)(ViewBag.MaxPrice ?? 0m);
+    string sortBy = ViewBag.SortBy ?? "newest";
+    bool onlyInStock = ViewBag.OnlyInStock ?? false;
+    int pageSize = ViewBag.PageSize ?? 12;
+}
+
+<div class="shop-products-head d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+        <h4 class="shop-page-title mb-1"><i class="bi bi-grid-fill me-2 text-primary"></i>Sản phẩm</h4>
+        <p class="shop-products-sub text-muted small mb-0">Lọc nhanh — kết quả cập nhật khi bạn bấm Tìm</p>
+    </div>
+</div>
+
+<!-- BỘ LỌC: gọn, 2 hàng trên desktop -->
+<div class="shop-filter-panel card border-0 mb-4">
+    <div class="shop-filter-panel-header d-flex align-items-center gap-2">
+        <i class="bi bi-sliders2"></i>
+        <span>Bộ lọc tìm kiếm</span>
+    </div>
+    <div class="card-body shop-filter-panel-body">
+        <form id="productSearchForm" method="get" asp-controller="Product" asp-action="Index">
+            <div class="row g-2 align-items-end">
+                <div class="col-12 col-lg-4">
+                    <label class="form-label shop-filter-label">Tên sản phẩm</label>
+                    <input name="searchValue" value="@searchValue" class="form-control form-control-sm shop-filter-input"
+                           placeholder="Nhập tên sản phẩm..." />
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label class="form-label shop-filter-label">Loại hàng</label>
+                    <select name="categoryID" class="form-select form-select-sm shop-filter-input">
+                        <option value="0">Tất cả</option>
+                        @foreach (var cat in categories)
+                        {
+                            <option value="@cat.CategoryID" selected="@(cat.CategoryID == categoryID)">
+                                @cat.CategoryName
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label class="form-label shop-filter-label">Giá từ → đến (đ)</label>
+                    <div class="d-flex gap-1 shop-filter-price-pair">
+                        <input name="minPrice" value="@(minPrice > 0 ? minPrice.ToString() : "")"
+                               type="number" min="0" step="10000" class="form-control form-control-sm shop-filter-input" placeholder="Từ" />
+                        <input name="maxPrice" value="@(maxPrice > 0 ? maxPrice.ToString() : "")"
+                               type="number" min="0" step="10000" class="form-control form-control-sm shop-filter-input" placeholder="Đến" />
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label class="form-label shop-filter-label">Sắp xếp</label>
+                    <select name="sortBy" class="form-select form-select-sm shop-filter-input">
+                        <option value="newest" selected="@(sortBy == "newest")">Mới nhất</option>
+                        <option value="price_asc" selected="@(sortBy == "price_asc")">Giá ↑</option>
+                        <option value="price_desc" selected="@(sortBy == "price_desc")">Giá ↓</option>
+                        <option value="name_asc" selected="@(sortBy == "name_asc")">Tên A-Z</option>
+                        <option value="name_desc" selected="@(sortBy == "name_desc")">Tên Z-A</option>
+                        <option value="stock_desc" selected="@(sortBy == "stock_desc")">Tồn kho</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-4 col-lg-1">
+                    <label class="form-label shop-filter-label">/ trang</label>
+                    <select name="pageSize" class="form-select form-select-sm shop-filter-input">
+                        <option value="8" selected="@(pageSize == 8)">8</option>
+                        <option value="12" selected="@(pageSize == 12)">12</option>
+                        <option value="24" selected="@(pageSize == 24)">24</option>
+                        <option value="36" selected="@(pageSize == 36)">36</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2 d-flex flex-wrap align-items-center gap-3 pb-1">
+                    <div class="form-check m-0">
+                        <input class="form-check-input" type="checkbox" name="onlyInStock" value="true" id="onlyInStock" checked="@onlyInStock">
+                        <label class="form-check-label small fw-semibold" for="onlyInStock">Chỉ còn hàng</label>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-1 d-grid">
+                    <button type="submit" class="btn btn-primary btn-sm fw-bold shop-filter-submit py-2">
+                        <i class="bi bi-search"></i> Tìm
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="searchResult">
+    @await Html.PartialAsync("_ProductGrid", Model)
+</div>
+
+@section Scripts {
+<script>
+function addToCart(productID, btn) {
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+    fetch('/Cart/Add?id=' + productID)
+        .then(r => r.json())
+        .then(data => {
+            if (data.requireLogin && data.redirectUrl) {
+                window.location.href = data.redirectUrl;
+                return;
+            }
+            if (data.success) {
+                // Cập nhật badge
+                const badges = document.querySelectorAll('.cart-badge');
+                badges.forEach(b => b.textContent = data.count > 99 ? '99+' : data.count);
+                if (badges.length === 0 && data.count > 0) {
+                    const cartLink = document.querySelector('a[href*="/Cart"]');
+                    if (cartLink) {
+                        const badge = document.createElement('span');
+                        badge.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge';
+                        badge.style.fontSize = '.65rem';
+                        badge.textContent = data.count;
+                        cartLink.style.position = 'relative';
+                        cartLink.appendChild(badge);
+                    }
+                }
+                btn.innerHTML = '<i class="bi bi-check me-1"></i>Đã thêm!';
+                btn.className = btn.className.replace('btn-success', 'btn-secondary');
+                setTimeout(() => {
+                    btn.innerHTML = orig;
+                    btn.className = btn.className.replace('btn-secondary', 'btn-success');
+                    btn.disabled = false;
+                }, 1500);
+            } else {
+                alert(data.message || 'Không thể thêm vào giỏ hàng!');
+                btn.innerHTML = orig;
+                btn.disabled = false;
+            }
+        })
+        .catch(() => {
+            alert('Lỗi kết nối!');
+            btn.innerHTML = orig;
+            btn.disabled = false;
+        });
+}
+</script>
+
+<script>
+    // AJAX search & pagination cho Shop (tránh reload toàn trang)
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("productSearchForm");
+        const container = document.getElementById("searchResult");
+        if (!form || !container) return;
+
+        function buildQuery(page) {
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+
+            for (const [key, value] of formData.entries()) {
+                const strVal = String(value ?? "").trim();
+                if (strVal !== "") params.append(key, strVal);
+            }
+
+            params.set("page", String(page));
+            return params.toString();
+        }
+
+        async function load(page) {
+            const url = form.action + "?" + buildQuery(page);
+            container.innerHTML = `<div class="text-center py-4 text-muted">
+                <div class="spinner-border spinner-border-sm me-2"></div>Đang tải...</div>`;
+
+            try {
+                const res = await fetch(url, {
+                    method: "GET",
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                });
+                const html = await res.text();
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = `<div class="alert alert-danger m-0">
+                    Không thể tải dữ liệu. Vui lòng thử lại.</div>`;
+            }
+        }
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            load(1);
+        });
+
+        // Event delegation: xử lý pagination trong partial
+        container.addEventListener("click", function (e) {
+            const link = e.target.closest("a.shop-page-link");
+            if (!link) return;
+
+            e.preventDefault();
+            const page = parseInt(link.dataset.page || "1", 10);
+            if (!Number.isFinite(page)) return;
+            load(page);
+        });
+    });
+</script>
+}

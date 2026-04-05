@@ -1,0 +1,104 @@
+@model SV22T1020469.Models.HR.Employee
+
+@section PageToolBar {
+    <button type="submit" form="formEdit" class="btn btn-primary">
+        <i class="bi bi-save"></i> Lưu dữ liệu
+    </button>
+    <a href="~/Employee" class="btn btn-secondary ms-1">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+}
+
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-person-badge me-2"></i> Thông tin nhân viên
+                </h5>
+            </div>
+
+            <div class="card-body">
+                <form id="formEdit" action="~/Employee/Save" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="EmployeeID" value="@Model.EmployeeID" />
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger mb-3" })
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Họ và tên <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="FullName" value="@Model.FullName" autofocus />
+                            @Html.ValidationMessage("FullName", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Ngày sinh <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="date" class="form-control" name="BirthDate" value="@(Model.BirthDate?.ToString("yyyy-MM-dd"))" />
+                            @Html.ValidationMessage("BirthDate", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Điện thoại <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="Phone" value="@Model.Phone" />
+                            @Html.ValidationMessage("Phone", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Email <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control" name="Email" value="@Model.Email" />
+                            @Html.ValidationMessage("Email", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Địa chỉ <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="Address" value="@Model.Address" />
+                            @Html.ValidationMessage("Address", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Ảnh chân dung</label>
+                        <div class="col-sm-10">
+                            <input type="hidden" name="Photo" value="@Model.Photo" />
+                            <input type="file" class="form-control" name="uploadPhoto" accept="image/*"
+                                   onchange="document.getElementById('imgPreview').src = window.URL.createObjectURL(this.files[0])" />
+                            @Html.ValidationMessage("Photo", new { @class = "text-danger" })
+                            <div class="mt-2">
+                                <img id="imgPreview"
+                                     src="@((string.IsNullOrEmpty(Model.Photo))
+                                            ? "/images/employees/nophoto.png"
+                                            : (Model.Photo == "nophoto.svg"
+                                                ? "/images/nophoto.svg"
+                                                : "/images/employees/" + Model.Photo))"
+                                     class="img-thumbnail"
+                                     onerror="this.src='/images/nophoto.svg'"
+                                     style="max-height: 150px; object-fit: cover;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-10 offset-sm-2">
+                            <div class="form-check form-switch mt-3">
+                                <input class="form-check-input" type="checkbox" role="switch" name="IsAllowed" value="true" id="IsAllowed" @(Model.IsWorking == true ? "checked" : "") style="cursor: pointer;">
+                                <input type="hidden" name="IsAllowed" value="false" />
+                                <label class="form-check-label text-primary fw-bold" for="IsAllowed" style="cursor: pointer;">
+                                    Cho phép kinh doanh (Hiển thị bán)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

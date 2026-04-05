@@ -1,0 +1,18 @@
+@model int
+@{ Layout = null; }
+<form method="post" action="/Order/Accept/@Model">
+    <div class="modal-header text-bg-info">
+        <strong class="modal-title"><i class="bi bi-check-circle me-1"></i>Duyệt chấp nhận đơn hàng</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-secondary d-flex align-items-center mb-0">
+            <i class="bi bi-check-circle me-2 fs-4"></i>
+            <span>Bạn có chắc chắn muốn duyệt và chấp nhận đơn hàng này?</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success"><i class="bi bi-check2 me-1"></i>Chấp nhận</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+    </div>
+</form>

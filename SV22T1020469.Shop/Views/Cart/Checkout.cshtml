@@ -1,0 +1,147 @@
+@model List<SV22T1020469.Shop.Models.CartItem>
+@{
+    ViewData["Title"] = "Đặt hàng";
+    decimal total = Model?.Sum(x => x.Total) ?? 0;
+}
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+        <li class="breadcrumb-item active">Xác nhận đặt hàng</li>
+    </ol>
+</nav>
+
+<h4 class="fw-bold mb-4">
+    <i class="bi bi-bag-check-fill me-2 text-success"></i>Xác nhận đặt hàng
+</h4>
+
+<!-- Bước tiến trình -->
+<div class="d-flex justify-content-center mb-5">
+    <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-1 text-muted">
+            <span class="badge bg-success rounded-circle p-2"><i class="bi bi-cart-check"></i></span>
+            <span class="fw-semibold text-success">Giỏ hàng</span>
+        </div>
+        <div style="width:60px; height:2px; background:#dee2e6;"></div>
+        <div class="d-flex align-items-center gap-1">
+            <span class="badge bg-primary rounded-circle p-2"><i class="bi bi-map"></i></span>
+            <span class="fw-semibold text-primary">Địa chỉ</span>
+        </div>
+        <div style="width:60px; height:2px; background:#dee2e6;"></div>
+        <div class="d-flex align-items-center gap-1 text-muted">
+            <span class="badge bg-secondary rounded-circle p-2"><i class="bi bi-check2-circle"></i></span>
+            <span>Hoàn tất</span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cột trái: Form giao hàng -->
+    <div class="col-lg-7">
+        <div class="card shop-section-card rounded-3">
+            <div class="card-header bg-white border-bottom fw-semibold">
+                <i class="bi bi-geo-alt me-1 text-primary"></i>Thông tin giao hàng
+            </div>
+            <div class="card-body p-4">
+                <form method="post" asp-controller="Order" asp-action="Checkout" id="checkoutForm">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            Tỉnh / Thành phố <span class="text-danger">*</span>
+                        </label>
+                        <select name="deliveryProvince" class="form-select" required id="provinceSelect">
+                            <option value="">-- Chọn tỉnh/thành phố --</option>
+                            @foreach (var p in new[]{"An Giang","Bà Rịa – Vũng Tàu","Bắc Giang","Bắc Kạn","Bạc Liêu","Bắc Ninh","Bến Tre","Bình Định","Bình Dương","Bình Phước","Bình Thuận","Cà Mau","Cần Thơ","Cao Bằng","Đà Nẵng","Đắk Lắk","Đắk Nông","Điện Biên","Đồng Nai","Đồng Tháp","Gia Lai","Hà Giang","Hà Nam","Hà Nội","Hà Tĩnh","Hải Dương","Hải Phòng","Hậu Giang","Hòa Bình","Hưng Yên","Khánh Hòa","Kiên Giang","Kon Tum","Lai Châu","Lâm Đồng","Lạng Sơn","Lào Cai","Long An","Nam Định","Nghệ An","Ninh Bình","Ninh Thuận","Phú Thọ","Phú Yên","Quảng Bình","Quảng Nam","Quảng Ngãi","Quảng Ninh","Quảng Trị","Sóc Trăng","Sơn La","Tây Ninh","Thái Bình","Thái Nguyên","Thanh Hóa","Thừa Thiên Huế","Tiền Giang","TP. Hồ Chí Minh","Trà Vinh","Tuyên Quang","Vĩnh Long","Vĩnh Phúc","Yên Bái"})
+                            {
+                                <option>@p</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Địa chỉ chi tiết <span class="text-danger">*</span>
+                        </label>
+                        <textarea name="deliveryAddress" class="form-control" rows="3" required
+                                  placeholder="Số nhà, tên đường, phường/xã, quận/huyện..."></textarea>
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Vui lòng nhập địa chỉ chính xác để đảm bảo giao hàng đúng nơi.
+                        </div>
+                    </div>
+
+                    @Html.ValidationSummary(false, "", new { @class = "alert alert-danger small py-2" })
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold rounded-pill"
+                                id="btnOrder">
+                            <i class="bi bi-bag-check-fill me-2"></i>Xác nhận đặt hàng
+                        </button>
+                        <a asp-controller="Cart" asp-action="Index"
+                           class="btn btn-outline-secondary rounded-pill">
+                            <i class="bi bi-arrow-left me-1"></i>Quay lại giỏ hàng
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột phải: Tóm tắt -->
+    <div class="col-lg-5">
+        <div class="card shop-section-card rounded-3 sticky-top shop-sticky-below-header">
+            <div class="card-header bg-white border-bottom fw-semibold">
+                <i class="bi bi-cart3 me-1 text-success"></i>
+                Tóm tắt đơn hàng (<span class="text-primary">@(Model?.Count ?? 0) sản phẩm</span>)
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    @if (Model != null)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-start py-3 px-3">
+                                <div class="me-2">
+                                    <div class="fw-semibold small">@item.ProductName</div>
+                                    <small class="text-muted">
+                                        @item.Quantity × @item.SalePrice.ToString("N0") đ
+                                    </small>
+                                </div>
+                                <span class="fw-bold text-danger text-nowrap small">
+                                    @item.Total.ToString("N0") đ
+                                </span>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="card-footer bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small">Phí vận chuyển</span>
+                    <span class="text-success fw-semibold small">Miễn phí</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">Tổng cộng</span>
+                    <span class="fw-bold text-danger fs-5">@total.ToString("N0") đ</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info small mt-3 rounded-3">
+            <i class="bi bi-clock me-1"></i>
+            Sau khi đặt hàng, nhân viên sẽ xác nhận trong vòng <strong>24 giờ</strong>.
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.getElementById('checkoutForm').addEventListener('submit', function() {
+        let btn = document.getElementById('btnOrder');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
+    });
+</script>
+}

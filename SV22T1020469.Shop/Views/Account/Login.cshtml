@@ -1,0 +1,128 @@
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shop-section-card border-0">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-circle text-primary" style="font-size:3rem"></i>
+                    <h4 class="fw-bold mt-2">Đăng nhập</h4>
+                    <p class="text-muted small">Chào mừng bạn quay lại NKTinhShop</p>
+                </div>
+
+                @{
+                    var rq = Context.Request.Query["reason"].ToString();
+                    string? loginReason = null;
+                    if (string.Equals(rq, "cart", StringComparison.OrdinalIgnoreCase)) loginReason = "cart";
+                    else if (string.Equals(rq, "viewcart", StringComparison.OrdinalIgnoreCase)) loginReason = "viewcart";
+                    else if (string.Equals(rq, "checkout", StringComparison.OrdinalIgnoreCase)) loginReason = "checkout";
+                    else if (string.Equals(rq, "orders", StringComparison.OrdinalIgnoreCase)) loginReason = "orders";
+                }
+                @if (loginReason == "viewcart")
+                {
+                    <div class="alert alert-warning border-0 small mb-3" role="alert">
+                        <i class="bi bi-cart3 me-1"></i>
+                        <strong>Vui lòng đăng nhập</strong> để xem giỏ hàng và tiếp tục mua sắm.
+                        Nếu bạn chưa có tài khoản, hãy <a asp-controller="Account" asp-action="Register" class="alert-link fw-semibold">đăng ký tài khoản mua sắm</a>.
+                    </div>
+                }
+                else if (loginReason == "cart")
+                {
+                    <div class="alert alert-warning border-0 small mb-3" role="alert">
+                        <i class="bi bi-cart-plus me-1"></i>
+                        <strong>Vui lòng đăng nhập</strong> để thêm sản phẩm vào giỏ và tiếp tục mua hàng.
+                        Nếu bạn chưa có tài khoản, hãy <a asp-controller="Account" asp-action="Register" class="alert-link fw-semibold">đăng ký tài khoản mua sắm</a>.
+                    </div>
+                }
+                else if (loginReason == "checkout")
+                {
+                    <div class="alert alert-warning border-0 small mb-3" role="alert">
+                        <i class="bi bi-bag-check me-1"></i>
+                        <strong>Vui lòng đăng nhập</strong> để thanh toán và hoàn tất đơn hàng.
+                        Nếu bạn chưa có tài khoản, hãy <a asp-controller="Account" asp-action="Register" class="alert-link fw-semibold">đăng ký tài khoản mua sắm</a>.
+                    </div>
+                }
+                else if (loginReason == "orders")
+                {
+                    <div class="alert alert-warning border-0 small mb-3" role="alert">
+                        <i class="bi bi-receipt me-1"></i>
+                        <strong>Vui lòng đăng nhập</strong> để xem lịch sử và chi tiết đơn mua.
+                        Nếu bạn chưa có tài khoản, hãy <a asp-controller="Account" asp-action="Register" class="alert-link fw-semibold">đăng ký tài khoản mua sắm</a>.
+                    </div>
+                }
+
+                <form method="post" asp-controller="Account" asp-action="Login">
+                    @if (!string.IsNullOrEmpty(ViewBag.ReturnUrl as string))
+                    {
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                    }
+                    @if (!string.IsNullOrEmpty(loginReason))
+                    {
+                        <input type="hidden" name="reason" value="@loginReason" />
+                    }
+
+                    <div asp-validation-summary="All" class="alert alert-danger py-2 small" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none")"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input name="email" type="email" class="form-control"
+                                   value="@(ViewBag.PrefillEmail as string)"
+                                   placeholder="example@email.com" required autocomplete="email" />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Mật khẩu <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input name="password" type="password" id="pwdInput" class="form-control"
+                                   placeholder="Nhập mật khẩu" required autocomplete="current-password" />
+                            <button class="btn btn-outline-secondary" type="button"
+                                    onclick="togglePwd('pwdInput', this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg fw-bold">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+                        </button>
+                    </div>
+
+                    <div class="text-center mb-2">
+                        <a asp-controller="Account" asp-action="ForgotPassword" class="small">
+                            Quên mật khẩu?
+                        </a>
+                    </div>
+
+                    <div class="text-center">
+                        <span class="text-muted small">Chưa có tài khoản?</span>
+                        <a asp-controller="Account" asp-action="Register" class="fw-semibold ms-1">Đăng ký ngay</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function togglePwd(inputId, btn) {
+    const inp = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+    } else {
+        inp.type = 'password';
+        icon.className = 'bi bi-eye';
+    }
+}
+</script>
+}
